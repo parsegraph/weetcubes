@@ -4,7 +4,7 @@ const audioTransition = 1.2;
 export default function alphaWeetCubeWidget(window) {
   this.window = window;
   if (!this.window) {
-    throw new Error('A Window must be provided when creating a Widget');
+    throw new Error("A Window must be provided when creating a Widget");
   }
 
   this.camera = new AlphaCamera();
@@ -38,19 +38,19 @@ export default function alphaWeetCubeWidget(window) {
     baseFreq * 0.67 * 0.67 * 0.67,
   ];
 
-  const randomFrequencyNodeCreator = function(nodeType, minFreq, freqRange) {
-    return function(audio) {
+  const randomFrequencyNodeCreator = function (nodeType, minFreq, freqRange) {
+    return function (audio) {
       const osc = audio.createOscillator();
       // osc.type=nodeType;
       const tRand = Math.random();
       if (tRand < 0.1) {
-        osc.type = 'triangle';
+        osc.type = "triangle";
       } else if (tRand < 0.6) {
-        osc.type = 'sawtooth';
+        osc.type = "sawtooth";
       } else if (tRand < 0.8) {
-        osc.type = 'sine';
+        osc.type = "sine";
       } else {
-        osc.type = 'square';
+        osc.type = "square";
       }
       osc.frequency.value = minFreq + Math.random() * freqRange;
       osc.start();
@@ -62,8 +62,8 @@ export default function alphaWeetCubeWidget(window) {
     };
   };
 
-  const fixedFrequencyNodeCreator = function(nodeType, freqs) {
-    return function(audio) {
+  const fixedFrequencyNodeCreator = function (nodeType, freqs) {
+    return function (audio) {
       const osc = audio.createOscillator();
       osc.type = nodeType;
       osc.frequency.value = freqs[this._nodesPainted % freqs.length];
@@ -77,14 +77,14 @@ export default function alphaWeetCubeWidget(window) {
   };
 
   this._audioModes = [
-    randomFrequencyNodeCreator('sawtooth', 24, 64),
-    fixedFrequencyNodeCreator('sine', this._freqs),
-    randomFrequencyNodeCreator('square', 16, 128),
-    randomFrequencyNodeCreator('triangle', 64, 1024),
-    fixedFrequencyNodeCreator('sawtooth', this._freqs),
-    fixedFrequencyNodeCreator('triangle', this._freqs),
-    randomFrequencyNodeCreator('sine', 320, 640),
-    randomFrequencyNodeCreator('sawtooth', 64, 96),
+    randomFrequencyNodeCreator("sawtooth", 24, 64),
+    fixedFrequencyNodeCreator("sine", this._freqs),
+    randomFrequencyNodeCreator("square", 16, 128),
+    randomFrequencyNodeCreator("triangle", 64, 1024),
+    fixedFrequencyNodeCreator("sawtooth", this._freqs),
+    fixedFrequencyNodeCreator("triangle", this._freqs),
+    randomFrequencyNodeCreator("sine", 320, 640),
+    randomFrequencyNodeCreator("sawtooth", 64, 96),
   ];
 
   this._currentAudioMode = 2;
@@ -134,8 +134,8 @@ export default function alphaWeetCubeWidget(window) {
 
   this.camera.GetParent().SetPosition(-1, -1, this._zMax * -5.0);
   this.camera
-      .GetParent()
-      .SetOrientation(QuaternionFromAxisAndAngle(0, 1, 0, Math.PI));
+    .GetParent()
+    .SetOrientation(QuaternionFromAxisAndAngle(0, 1, 0, Math.PI));
 
   this._component = new Component();
   this._component.setPainter(this.paint, this);
@@ -143,42 +143,42 @@ export default function alphaWeetCubeWidget(window) {
   this._component.setEventHandler(this.handleEvent, this);
 }
 
-alphaWeetCubeWidget.prototype.handleEvent = function(eventType, eventData) {
-  if (eventType === 'tick') {
+alphaWeetCubeWidget.prototype.handleEvent = function (eventType, eventData) {
+  if (eventType === "tick") {
     this.Tick();
     return true;
-  } else if (eventType === 'wheel') {
+  } else if (eventType === "wheel") {
     return this._input.onWheel(eventData);
-  } else if (eventType === 'mousemove') {
+  } else if (eventType === "mousemove") {
     return this._input.onMousemove(eventData);
-  } else if (eventType === 'mousedown') {
+  } else if (eventType === "mousedown") {
     return this._input.onMousedown(eventData);
-  } else if (eventType === 'mouseup') {
+  } else if (eventType === "mouseup") {
     return this._input.onMouseup(eventData);
-  } else if (eventType === 'keydown') {
+  } else if (eventType === "keydown") {
     return this._input.onKeydown(eventData);
-  } else if (eventType === 'keyup') {
+  } else if (eventType === "keyup") {
     return this._input.onKeyup(eventData);
   }
   return false;
 };
 
-alphaWeetCubeWidget.prototype.component = function() {
+alphaWeetCubeWidget.prototype.component = function () {
   return this._component;
 };
 
-alphaWeetCubeWidget.prototype.createAudioNode = function(audio) {
+alphaWeetCubeWidget.prototype.createAudioNode = function (audio) {
   const creator = this._audioModes[this._currentAudioMode];
   const n = creator.call(this, audio);
   // console.log("Creating audio node: ", this._currentAudioMode, n);
   return n;
 };
 
-alphaWeetCubeWidget.prototype.onKeyDown = function(key) {
+alphaWeetCubeWidget.prototype.onKeyDown = function (key) {
   // console.log(key);
   switch (key) {
-    case 'Enter':
-    case 'Return':
+    case "Enter":
+    case "Return":
       this.switchAudioMode();
       return true;
     default:
@@ -187,23 +187,23 @@ alphaWeetCubeWidget.prototype.onKeyDown = function(key) {
   }
 };
 
-alphaWeetCubeWidget.prototype.switchAudioMode = function() {
+alphaWeetCubeWidget.prototype.switchAudioMode = function () {
   this._currentAudioMode =
     (this._currentAudioMode + 1) % this._audioModes.length;
   this._modeSwitched = true;
 };
 
-alphaWeetCubeWidget.prototype.TickIfNecessary = function() {
+alphaWeetCubeWidget.prototype.TickIfNecessary = function () {
   // console.log("Necessary?", parsegraph_elapsed(this._lastPaint));
   if (parsegraph_elapsed(this._lastPaint) > 20) {
-    console.log('Necessary:' + parsegraph_elapsed(this._lastPaint));
+    console.log("Necessary:" + parsegraph_elapsed(this._lastPaint));
     this.Tick();
     return true;
   }
   return false;
 };
 
-alphaWeetCubeWidget.prototype.Tick = function() {
+alphaWeetCubeWidget.prototype.Tick = function () {
   const elapsed = parsegraph_elapsed(this._lastPaint) / 500;
   this._input.Update(elapsed);
   if (!this._frozen) {
@@ -211,39 +211,39 @@ alphaWeetCubeWidget.prototype.Tick = function() {
   }
 };
 
-alphaWeetCubeWidget.prototype.refresh = function() {
+alphaWeetCubeWidget.prototype.refresh = function () {
   if (this.cubePainter) {
     this.cubePainter.Init(this._xMax * this._yMax * this._zMax);
   }
 };
 
-alphaWeetCubeWidget.prototype.setMax = function(max) {
+alphaWeetCubeWidget.prototype.setMax = function (max) {
   this._xMax = max;
   this._yMax = max;
   this._zMax = max;
   this.refresh();
 };
 
-alphaWeetCubeWidget.prototype.setXMax = function(xMax) {
+alphaWeetCubeWidget.prototype.setXMax = function (xMax) {
   this._xMax = xMax;
   this.refresh();
 };
 
-alphaWeetCubeWidget.prototype.setYMax = function(yMax) {
+alphaWeetCubeWidget.prototype.setYMax = function (yMax) {
   this._yMax = yMax;
   this.refresh();
 };
 
-alphaWeetCubeWidget.prototype.setZMax = function(zMax) {
+alphaWeetCubeWidget.prototype.setZMax = function (zMax) {
   this._zMax = zMax;
   this.refresh();
 };
 
-alphaWeetCubeWidget.prototype.setRotq = function(rotq) {
+alphaWeetCubeWidget.prototype.setRotq = function (rotq) {
   this.rotq = rotq;
 };
 
-alphaWeetCubeWidget.prototype.paint = function() {
+alphaWeetCubeWidget.prototype.paint = function () {
   const audio = this.window.audio();
   if (!this.cubePainter) {
     this.cubePainter = new WeetPainter(this.window);
@@ -270,8 +270,8 @@ alphaWeetCubeWidget.prototype.paint = function() {
     this._audioNodePositions = [];
   } else if (this._modeSwitched) {
     const oldModeNodes = [].concat(this._modeAudioNodes);
-    setTimeout(function() {
-      oldModeNodes.forEach(function(node) {
+    setTimeout(function () {
+      oldModeNodes.forEach(function (node) {
         node.disconnect();
       });
     }, 1000 * (audioTransition + 0.1));
@@ -304,8 +304,8 @@ alphaWeetCubeWidget.prototype.paint = function() {
         if (createAudioNodes && makeAudio) {
           const node = this.createAudioNode(audio);
           panner = audio.createPanner();
-          panner.panningModel = 'HRTF';
-          panner.distanceModel = 'exponential';
+          panner.panningModel = "HRTF";
+          panner.distanceModel = "exponential";
           panner.rolloffFactor = 2;
           panner.coneInnerAngle = 360;
           panner.coneOuterAngle = 0;
@@ -322,8 +322,8 @@ alphaWeetCubeWidget.prototype.paint = function() {
           panner = this._audioNodes[az];
           if (this._modeSwitched) {
             this._modeAudioNodes[az].gain.linearRampToValueAtTime(
-                0,
-                audio.currentTime + audioTransition,
+              0,
+              audio.currentTime + audioTransition
             );
             const node = this.createAudioNode(audio);
             this._modeAudioNodes[az] = node;
@@ -368,15 +368,15 @@ alphaWeetCubeWidget.prototype.paint = function() {
   }
 };
 
-alphaWeetCubeWidget.prototype.setUpdateListener = function(
-    listener,
-    listenerThisArg,
+alphaWeetCubeWidget.prototype.setUpdateListener = function (
+  listener,
+  listenerThisArg
 ) {
   this._listener = listener;
   this._listenerThisArg = listenerThisArg || this;
 };
 
-alphaWeetCubeWidget.prototype.render = function(width, height) {
+alphaWeetCubeWidget.prototype.render = function (width, height) {
   if (!this.cubePainter) {
     return;
   }

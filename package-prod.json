@@ -1,0 +1,19 @@
+{
+  "name": "parsegraph-weetcubes",
+  "version": "1.5.0",
+  "description": "Animated 3D cubes with eerie sound",
+  "main": "dist/parsegraph-weetcubes.js",
+  "types": "dist/parsegraph-weetcubes.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/parsegraph/weetcubes.git"
+  },
+  "author": "Rainback, Inc.",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/parsegraph/weetcubes/issues"
+  },
+  "homepage": "https://github.com/parsegraph/weetcubes#readme",
+  "dependencies": {
+  }
+}

@@ -3,8 +3,8 @@ const path = require("path");
 module.exports = {
   entry: path.resolve(__dirname, "src/index.ts"),
   output: {
-    path: path.resolve(__dirname, "dist"),
-    filename: "weetcubes.js",
+    path: path.resolve(__dirname, "dist-prod"),
+    filename: "parsegraph-weetcubes.js",
     globalObject: "this",
     library: "parsegraph_weetcubes",
     libraryTarget: "umd",
@@ -12,7 +12,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(js|ts|tsx?)$/,
+        test: /\.[jt]sx?$/,
         exclude: /node_modules/,
         use: ["babel-loader", "ts-loader"]
       },
@@ -21,12 +21,15 @@ module.exports = {
         exclude: /node_modules/,
         use: ["ts-shader-loader"],
       },
+      {
+        test: /\.png/,
+        type: "asset/inline"
+      }
     ],
   },
   resolve: {
     extensions: [".js", ".ts", ".tsx", ".glsl"],
     modules: [path.resolve(__dirname, "src"), "node_modules"],
   },
-  mode: "development",
-  devtool: "eval-source-map",
+  mode: "production",
 };

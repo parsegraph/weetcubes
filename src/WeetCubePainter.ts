@@ -1,17 +1,18 @@
 /* eslint-disable require-jsdoc */
 
-import compileProgram from "parsegraph-compileprogram";
-import { Float32Array } from "parsegraph-collections";
+import {GLProvider, compileProgram} from "parsegraph-compileprogram";
+import { Float32List } from "parsegraph-collections";
+import Color from 'parsegraph-color';
+import {Matrix4x4} from 'parsegraph-matrix';
 
 import alphaWeetPainterVertexShader from "./WeetPainter_VertexShader.glsl";
 import alphaWeetPainterFragmentShader from "./WeetPainter_FragmentShader.glsl";
 
-{
-  const cubeSize = 1;
+const makeCubeVertices = (cubeSize: number) => {
   const width = cubeSize;
   const length = cubeSize;
   const height = cubeSize;
-  const cv = [
+  return [
     // Front
     [-width, length, height], // v0
     [width, length, height], // v1
@@ -48,56 +49,69 @@ import alphaWeetPainterFragmentShader from "./WeetPainter_FragmentShader.glsl";
     [-width, length, -height], // v3
     [width, length, -height], // v2
   ];
-  CUBE_VERTICES = cv;
+};
+const CUBE_VERTICES = makeCubeVertices(1);
 
-  CUBE_COLORS = [
-    new AlphaColor(1, 1, 0), // 0
-    new AlphaColor(0, 1, 1), // 5
-    new AlphaColor(1, 0, 1), // 1
-    new AlphaColor(0, 0, 1), // 2
-    new AlphaColor(1, 0, 0), // 3
-    new AlphaColor(0, 1, 0), // 4
-  ];
-}
+const CUBE_COLORS = [
+  new Color(1, 1, 0), // 0
+  new Color(0, 1, 1), // 5
+  new Color(1, 0, 1), // 1
+  new Color(0, 0, 1), // 2
+  new Color(1, 0, 0), // 3
+  new Color(0, 1, 0), // 4
+];
 
 /*
  * Draws 3d faces in a solid color.
  */
 export default class WeetCubePainter {
-  constructor(window) {
-    if (!window) {
-      throw new Error("A Window must be provided when creating a WeetPainter");
+  aPosition: number;
+  aColor: number;
+  uWorld: WebGLUniformLocation;
+  faceProgram: WebGLProgram;
+  _numCubes: number;
+  _glProvider: GLProvider;
+  _posBuffer: WebGLBuffer;
+  _colorBuffer: WebGLBuffer;
+  _data: Float32List;
+  _dataX: number;
+
+  constructor(glProvider: GLProvider) {
+    if (!glProvider) {
+      throw new Error("A GLProvider must be provided when creating a WeetCubePainter");
     }
-    this.gl = window.gl();
+    this._glProvider = glProvider;
     this._numCubes = null;
 
     this.faceProgram = compileProgram(
-      window,
+      this._glProvider,
       "alpha_WeetPainter",
       alphaWeetPainterVertexShader,
       alphaWeetPainterFragmentShader
     );
 
     // Prepare attribute buffers.
-    this.a_position = this.gl.getAttribLocation(this.faceProgram, "a_position");
-    this.a_color = this.gl.getAttribLocation(this.faceProgram, "a_color");
+    const gl = this.gl();
+    this.aPosition = gl.getAttribLocation(this.faceProgram, "a_position");
+    this.aColor = gl.getAttribLocation(this.faceProgram, "a_color");
 
     // Cache program locations.
-    this.u_world = this.gl.getUniformLocation(this.faceProgram, "u_world");
+    this.uWorld = gl.getUniformLocation(this.faceProgram, "u_world");
   }
 
-  Init(numCubes:number) {
+  initBuffer(numCubes:number) {
+    const gl = this.gl();
     if (!this._posBuffer) {
-      this._posBuffer = this.gl.createBuffer();
+      this._posBuffer = gl.createBuffer();
     }
-    this._data = new Float32Array(numCubes * 6 * 6 * 4);
+    this._data = new Float32List(numCubes * 6 * 6 * 4);
     // console.log("Data is " + this._data.length + " floats large");
     this._dataX = 0;
 
     if (!this._colorBuffer) {
-      this._colorBuffer = this.gl.createBuffer();
+      this._colorBuffer = gl.createBuffer();
     }
-    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this._colorBuffer);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this._colorBuffer);
     const colorData = this._data;
     let x = 0;
     for (let i = 0; i < numCubes; ++i) {
@@ -107,24 +121,24 @@ export default class WeetCubePainter {
         const col = CUBE_COLORS[j];
         for (let k = 0; k < 6; ++k) {
           // Vertex
-          colorData[x++] = col[0];
-          colorData[x++] = col[1];
-          colorData[x++] = col[2];
+          colorData[x++] = col.r();
+          colorData[x++] = col.g();
+          colorData[x++] = col.b();
           colorData[x++] = 1.0;
         }
       }
     }
     // console.log("color floats rendered = " + 4*x);
-    this.gl.bufferData(this.gl.ARRAY_BUFFER, colorData, this.gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, colorData, gl.STATIC_DRAW);
     this._numCubes = numCubes;
   };
 
-  Cube(m) {
+  drawCube(m:Matrix4x4) {
     if (!this._data) {
       throw new Error("Init must be called first");
     }
-    const drawFace = function (c1, c2, c3, c4, color) {
-      const drawVert = function (v) {
+    const drawFace = function (c1:number[], c2:number[], c3:number[], c4:number[]) {
+      const drawVert = function (v:number[]) {
         const x = m[0] * v[0] + m[1] * v[1] + m[2] * v[2] + m[12];
         const y = m[4] * v[0] + m[5] * v[1] + m[6] * v[2] + m[13];
         const z = m[8] * v[0] + m[9] * v[1] + m[10] * v[2] + m[14];
@@ -159,38 +173,42 @@ export default class WeetCubePainter {
     drawFace.call(this, cv[20], cv[21], cv[22], cv[23], cc[4]);
   };
 
-  Clear() {
+  clear() {
     if (!this._data) {
       return;
     }
     this._dataX = 0;
   };
 
-  Draw(viewMatrix) {
+  render(viewMatrix:Matrix4x4) {
     if (!viewMatrix) {
       throw new Error("A viewMatrix must be provided");
     }
 
     // Render faces.
-    const gl = this.gl;
+    const gl = this.gl();
     // gl.disable(gl.CULL_FACE);
     gl.useProgram(this.faceProgram);
-    gl.uniformMatrix4fv(this.u_world, false, viewMatrix.toArray());
+    gl.uniformMatrix4fv(this.uWorld, false, viewMatrix);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this._posBuffer);
     // console.log("dataX * sizeof(float = " + 4*this._dataX);
     gl.bufferData(gl.ARRAY_BUFFER, this._data, gl.STREAM_DRAW);
-    gl.vertexAttribPointer(this.a_position, 4, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(this.a_position);
+    gl.vertexAttribPointer(this.aPosition, 4, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(this.aPosition);
 
-    gl.enableVertexAttribArray(this.a_color);
+    gl.enableVertexAttribArray(this.aColor);
     gl.bindBuffer(gl.ARRAY_BUFFER, this._colorBuffer);
-    gl.vertexAttribPointer(this.a_color, 4, gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer(this.aColor, 4, gl.FLOAT, false, 0, 0);
 
     // console.log("num rendered = " + (this._dataX / 4));
     gl.drawArrays(gl.TRIANGLES, 0, this._dataX / 4);
 
-    gl.disableVertexAttribArray(this.a_position);
-    gl.disableVertexAttribArray(this.a_color);
+    gl.disableVertexAttribArray(this.aPosition);
+    gl.disableVertexAttribArray(this.aColor);
   };
+
+  gl() {
+    return this._glProvider.gl();
+  }
 }

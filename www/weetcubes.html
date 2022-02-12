@@ -5,53 +5,29 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" type="text/css" href="/environment.css" />
-    <script src="/parsegraph.js"></script>
+    <script src="parsegraph-log.js"></script>
     <script>
-      document.addEventListener("DOMContentLoaded", function (event) {
-        parsegraph_initialize();
-        var window = new parsegraph_Window();
-        var world = new parsegraph_World();
-        document.body.appendChild(window.container());
-        var belt = new parsegraph_TimingBelt();
-        belt.addWindow(window);
-        parsegraph_addEventMethod(
-          top.window,
-          "resize",
-          belt.scheduleUpdate,
-          belt
-        );
-
-        var widget = new alpha_WeetCubeWidget(window);
-        WIDGET = widget;
-        window.addWidget(widget);
-
-        var audioUpdate = null;
-        var backgroundAudioForcer = new parsegraph_IntervalTimer();
-        backgroundAudioForcer.setDelay(0);
-        backgroundAudioForcer.setListener(function () {
-          if (widget.TickIfNecessary()) {
-            widget.paint();
-            window.render();
-          }
-        }, this);
-
-        parsegraph_addEventListener(document, "keydown", function (event) {
-          if (event.key === "Escape") {
-            widget._frozen = !widget._frozen;
-          }
-        });
-
-        var started = false;
-        document.addEventListener("click", function (event) {
-          if (started) {
-            return;
-          }
-          started = true;
-          window.startAudio();
-          backgroundAudioForcer.schedule();
-        });
-      }); // DOMContentLoaded
+        parsegraph_log.connectLog("wss://fritocomp.aaronfaanes/log");
     </script>
+    <script src="parsegraph-checkglerror.js"></script>
+    <script>
+        parsegraph_checkglerror.setIgnoreGLErrors(true);
+    </script>
+    <style>
+    body {
+        margin: 0;
+        padding: 0;
+    }
+    .parsegraph_Window {
+        width: 100%;
+        height: 100%;
+    }
+    </style>
   </head>
-  <body></body>
+<body>
+  <div style="width: 100vw; height: 100vh">
+    <div style="width: 100%; height: 100%" id="demo"></div>
+  </div>
+  <script src="parsegraph-weetcubes.demo.js"></script>
+</body>
 </html>

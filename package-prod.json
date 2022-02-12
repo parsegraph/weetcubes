@@ -15,5 +15,11 @@
   },
   "homepage": "https://github.com/parsegraph/weetcubes#readme",
   "dependencies": {
+    "parsegraph-compileprogram": "^2.2.1",
+    "parsegraph-projector": "^1.7.4"
+  },
+  "peerDependencies": {
+    "parsegraph-checkglerror": "^1.5.1",
+    "parsegraph-log": "^1.7.0"
   }
 }

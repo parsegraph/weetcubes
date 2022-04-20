@@ -13,17 +13,6 @@
     "url": "https://github.com/parsegraph/weetcubes/issues"
   },
   "homepage": "https://github.com/parsegraph/weetcubes#readme",
-  "nyc": {
-    "extends": "@istanbuljs/nyc-config-babel",
-    "reporter": [
-      "html"
-    ],
-    "exclude": [
-      "test/**.js",
-      "dist/**.js"
-    ],
-    "reportDir": "dist/coverage"
-  },
   "dependencies": {
     "@atscm/esdoc-typescript-plugin": "^0.1.0",
     "@babel/cli": "^7.17.0",

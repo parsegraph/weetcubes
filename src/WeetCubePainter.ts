@@ -1,9 +1,9 @@
 /* eslint-disable require-jsdoc */
 
-import {GLProvider, compileProgram} from "parsegraph-compileprogram";
+import { GLProvider, compileProgram } from "parsegraph-compileprogram";
 import { Float32List } from "parsegraph-collections";
-import Color from 'parsegraph-color';
-import {Matrix4x4} from 'parsegraph-matrix';
+import Color from "parsegraph-color";
+import { Matrix4x4 } from "parsegraph-matrix";
 
 import alphaWeetPainterVertexShader from "./WeetPainter_VertexShader.glsl";
 import alphaWeetPainterFragmentShader from "./WeetPainter_FragmentShader.glsl";
@@ -78,7 +78,9 @@ export default class WeetCubePainter {
 
   constructor(glProvider: GLProvider) {
     if (!glProvider) {
-      throw new Error("A GLProvider must be provided when creating a WeetCubePainter");
+      throw new Error(
+        "A GLProvider must be provided when creating a WeetCubePainter"
+      );
     }
     this._glProvider = glProvider;
     this._numCubes = null;
@@ -99,7 +101,7 @@ export default class WeetCubePainter {
     this.uWorld = gl.getUniformLocation(this.faceProgram, "u_world");
   }
 
-  initBuffer(numCubes:number) {
+  initBuffer(numCubes: number) {
     const gl = this.gl();
     if (!this._posBuffer) {
       this._posBuffer = gl.createBuffer();
@@ -131,14 +133,19 @@ export default class WeetCubePainter {
     // console.log("color floats rendered = " + 4*x);
     gl.bufferData(gl.ARRAY_BUFFER, colorData, gl.STATIC_DRAW);
     this._numCubes = numCubes;
-  };
+  }
 
-  drawCube(m:Matrix4x4) {
+  drawCube(m: Matrix4x4) {
     if (!this._data) {
       throw new Error("Init must be called first");
     }
-    const drawFace = function (c1:number[], c2:number[], c3:number[], c4:number[]) {
-      const drawVert = function (v:number[]) {
+    const drawFace = function (
+      c1: number[],
+      c2: number[],
+      c3: number[],
+      c4: number[]
+    ) {
+      const drawVert = function (v: number[]) {
         const x = m[0] * v[0] + m[1] * v[1] + m[2] * v[2] + m[12];
         const y = m[4] * v[0] + m[5] * v[1] + m[6] * v[2] + m[13];
         const z = m[8] * v[0] + m[9] * v[1] + m[10] * v[2] + m[14];
@@ -171,16 +178,16 @@ export default class WeetCubePainter {
     drawFace.call(this, cv[16], cv[17], cv[18], cv[19], cc[3]);
     // Bottom
     drawFace.call(this, cv[20], cv[21], cv[22], cv[23], cc[4]);
-  };
+  }
 
   clear() {
     if (!this._data) {
       return;
     }
     this._dataX = 0;
-  };
+  }
 
-  render(viewMatrix:Matrix4x4) {
+  render(viewMatrix: Matrix4x4) {
     if (!viewMatrix) {
       throw new Error("A viewMatrix must be provided");
     }
@@ -206,7 +213,7 @@ export default class WeetCubePainter {
 
     gl.disableVertexAttribArray(this.aPosition);
     gl.disableVertexAttribArray(this.aColor);
-  };
+  }
 
   gl() {
     return this._glProvider.gl();

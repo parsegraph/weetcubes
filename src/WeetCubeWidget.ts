@@ -1,12 +1,12 @@
 /* eslint-disable require-jsdoc, new-cap, max-len */
 
 import WeetCubePainter from "./WeetCubePainter";
-import { elapsed } from 'parsegraph-timing';
-import { Projector } from 'parsegraph-projector';
-import Method from 'parsegraph-method';
+import { elapsed } from "parsegraph-timing";
+import { Projector } from "parsegraph-projector";
+import Method from "parsegraph-method";
 
-const randomFrequencyNodeCreator = (minFreq:number, freqRange:number)=>
-  (audio:AudioContext)=>{
+const randomFrequencyNodeCreator =
+  (minFreq: number, freqRange: number) => (audio: AudioContext) => {
     const osc = audio.createOscillator();
     const tRand = Math.random();
     if (tRand < 0.1) {
@@ -27,8 +27,8 @@ const randomFrequencyNodeCreator = (minFreq:number, freqRange:number)=>
     return g;
   };
 
-const fixedFrequencyNodeCreator = (nodeType:OscillatorType, freq:number)=>
-  (audio:AudioContext)=>{
+const fixedFrequencyNodeCreator =
+  (nodeType: OscillatorType, freq: number) => (audio: AudioContext) => {
     const osc = audio.createOscillator();
     osc.type = nodeType;
     osc.frequency.value = freq;
@@ -54,21 +54,23 @@ export default class WeetCubeWidget {
   _freqs: number[];
   rotq: number;
   _currentAudioMode: number;
-  _audioModes: ((audio:AudioContext)=>GainNode)[];
+  _audioModes: ((audio: AudioContext) => GainNode)[];
   _audioOut: AudioNode;
   _audioNodes: PannerNode[];
   _modeAudioNodes: GainNode[];
   _nodesPainted: number;
   _audioNodePositions: number[];
   _projector: Projector;
-  _onUpdate:Method;
+  _onUpdate: Method;
 
   camera: any;
   _input: any;
 
   constructor(projector: Projector) {
     if (!projector) {
-      throw new Error("A Projector must be provided when creating a WeetCubeWidget");
+      throw new Error(
+        "A Projector must be provided when creating a WeetCubeWidget"
+      );
     }
     this._projector = projector;
     this._onUpdate = new Method();
@@ -166,7 +168,7 @@ export default class WeetCubeWidget {
       .SetOrientation(QuaternionFromAxisAndAngle(0, 1, 0, Math.PI));
   }
 
-  handleEvent(eventType:string, eventData?:any) {
+  handleEvent(eventType: string, eventData?: any) {
     if (eventType === "tick") {
       this.Tick();
       return true;
@@ -184,16 +186,16 @@ export default class WeetCubeWidget {
       return this._input.onKeyup(eventData);
     }
     return false;
-  };
+  }
 
-  private createAudioNode(audio:AudioContext) {
+  private createAudioNode(audio: AudioContext) {
     const creator = this._audioModes[this._currentAudioMode];
     const n = creator.call(this, audio);
     // console.log("Creating audio node: ", this._currentAudioMode, n);
     return n;
-  };
+  }
 
-  onKeyDown(key:string) {
+  onKeyDown(key: string) {
     // console.log(key);
     switch (key) {
       case "Enter":
@@ -204,13 +206,13 @@ export default class WeetCubeWidget {
         // Key unhandled.
         return false;
     }
-  };
+  }
 
   switchAudioMode() {
     this._currentAudioMode =
       (this._currentAudioMode + 1) % this._audioModes.length;
     this._modeSwitched = true;
-  };
+  }
 
   TickIfNecessary() {
     // console.log("Necessary?", parsegraph_elapsed(this._lastPaint));
@@ -220,7 +222,7 @@ export default class WeetCubeWidget {
       return true;
     }
     return false;
-  };
+  }
 
   Tick() {
     const e = elapsed(this._lastPaint) / 500;
@@ -228,46 +230,50 @@ export default class WeetCubeWidget {
     if (!this._frozen) {
       this._elapsed += e;
     }
-  };
+  }
 
   refresh() {
     if (this.cubePainter) {
       this.cubePainter.initBuffer(this._xMax * this._yMax * this._zMax);
     }
-  };
+  }
 
-  setMax(max:number) {
+  setMax(max: number) {
     this._xMax = max;
     this._yMax = max;
     this._zMax = max;
     this.refresh();
-  };
+  }
 
-  setXMax(xMax:number) {
+  setXMax(xMax: number) {
     this._xMax = xMax;
     this.refresh();
-  };
+  }
 
-  setYMax(yMax:number) {
+  setYMax(yMax: number) {
     this._yMax = yMax;
     this.refresh();
-  };
+  }
 
-  setZMax(zMax:number) {
+  setZMax(zMax: number) {
     this._zMax = zMax;
     this.refresh();
-  };
+  }
 
-  setRotq(rotq:number) {
+  setRotq(rotq: number) {
     this.rotq = rotq;
-  };
+  }
 
   projector() {
     return this._projector;
   }
 
   audio() {
-    return this.projector() && this.projector().hasAudio() && this.projector().audio();
+    return (
+      this.projector() &&
+      this.projector().hasAudio() &&
+      this.projector().audio()
+    );
   }
 
   paint() {
@@ -390,17 +396,17 @@ export default class WeetCubeWidget {
     this._modeSwitched = false;
     this._lastPaint = new Date();
     this._onUpdate.call();
-  };
+  }
 
-  setUpdateListener(listener:()=>void, listenerThisArg?:object):void {
+  setUpdateListener(listener: () => void, listenerThisArg?: object): void {
     this._onUpdate.set(listener, listenerThisArg);
-  };
+  }
 
   gl() {
     return this.projector().glProvider().gl();
   }
 
-  render(width:number, height:number) {
+  render(width: number, height: number) {
     if (!this.cubePainter) {
       return;
     }

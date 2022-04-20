@@ -1,7 +1,4 @@
-import WeetCubeWidget from './WeetCubeWidget';
-import WeetCubePainter from './WeetCubePainter';
+import WeetCubeWidget from "./WeetCubeWidget";
+import WeetCubePainter from "./WeetCubePainter";
 
-export {
-  WeetCubeWidget,
-  WeetCubePainter
-}
+export { WeetCubeWidget, WeetCubePainter };

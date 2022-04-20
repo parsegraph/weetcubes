@@ -1,4 +1,4 @@
-var assert = require("assert");
+const assert = require("assert");
 import todo from "../dist/weetcubes";
 
 describe("Package", function () {

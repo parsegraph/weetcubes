@@ -19,6 +19,7 @@
     "parsegraph-color": "^1.4.5",
     "parsegraph-compileprogram": "^2.2.1",
     "parsegraph-matrix": "^1.4.8",
+    "parsegraph-method": "^1.4.22",
     "parsegraph-projector": "^1.7.4",
     "parsegraph-timing": "^1.4.8",
     "parsegraph-timingbelt": "^1.7.1",

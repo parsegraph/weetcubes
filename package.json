@@ -3,14 +3,6 @@
   "version": "1.5.0",
   "description": "Animated 3D cubes with eerie sound",
   "main": "dist/src/index.js",
-  "scripts": {
-    "coverage": "nyc npm run test",
-    "test": "cross-env TS_NODE_PROJECT=\"tsconfig.testing.json\" mocha",
-    "autotest": "cross-env TS_NODE_PROJECT=\"tsconfig.testing.json\" mocha --watch",
-    "demo": "node demo/demo.js",
-    "autobuild": "webpack --watch --config webpack.config.js",
-    "build": "webpack --config webpack.config.js"
-  },
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/parsegraph/weetcubes.git"

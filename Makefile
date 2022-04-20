@@ -1,11 +1,15 @@
 DIST_NAME = weetcubes
-DEMO_PORT = 3050
-DEMO_ROOT =
 
 SCRIPT_FILES = \
 	src/index.ts \
-	src/demo.ts \
+	src/WeetCubePainter.ts \
+	src/glsl.d.ts \
 	src/WeetCubeWidget.ts \
-	src/WeetCubePainter.ts
+	src/demo.ts \
+	test/test.ts
 
-include ./microproject.Makefile
+EXTRA_SCRIPTS = \
+	src/WeetPainter_FragmentShader.glsl \
+	src/WeetPainter_VertexShader.glsl
+
+include ./Makefile.microproject

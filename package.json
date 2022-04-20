@@ -55,5 +55,12 @@
     "parsegraph-checkglerror": "^1.5.1",
     "parsegraph-log": "^1.7.0"
   },
-  "types": "dist/src/index.d.ts"
+  "types": "dist/src/index.d.ts",
+  "devDependencies": {
+    "@types/jest": "^27.4.1",
+    "@types/node": "^17.0.25",
+    "babel-jest": "^27.5.1",
+    "jest": "^27.5.1",
+    "typedoc": "^0.22.15"
+  }
 }

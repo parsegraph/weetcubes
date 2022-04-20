@@ -2,7 +2,7 @@
   "name": "parsegraph-weetcubes",
   "version": "1.5.0",
   "description": "Animated 3D cubes with eerie sound",
-  "main": "dist/parsegraph-weetcubes.js",
+  "main": "dist/src/index.js",
   "scripts": {
     "coverage": "nyc npm run test",
     "test": "cross-env TS_NODE_PROJECT=\"tsconfig.testing.json\" mocha",
@@ -89,5 +89,6 @@
   "peerDependencies": {
     "parsegraph-checkglerror": "^1.5.1",
     "parsegraph-log": "^1.7.0"
-  }
+  },
+  "types": "dist/src/index.d.ts"
 }

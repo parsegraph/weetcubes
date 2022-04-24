@@ -10,7 +10,9 @@ import {
   PhysicalMatrixMode,
   quaternionFromAxisAndAngle,
 } from "parsegraph-physical";
-import {Matrix4x4} from 'parsegraph-matrix';
+import { Matrix4x4 } from "parsegraph-matrix";
+
+const ROTATION_FREQUENCY = 2000;
 
 const randomFrequencyNodeCreator =
   (minFreq: number, freqRange: number) => (audio: AudioContext) => {
@@ -68,6 +70,7 @@ export default class WeetCubeWidget implements Projected {
   _nodesPainted: number;
   _audioNodePositions: number[];
   _onUpdate: Method;
+  _rotFreq: number;
 
   camera: AlphaCamera;
   // _input: AlphaInput;
@@ -79,6 +82,8 @@ export default class WeetCubeWidget implements Projected {
     this.camera.setFovX(60);
     this.camera.setFarDistance(1000);
     this.camera.setNearDistance(0.1);
+
+    this._rotFreq = ROTATION_FREQUENCY;
 
     // this._input = new AlphaInput(proj, this.camera);
     // this._input.SetMouseSensitivity(0.4);
@@ -236,8 +241,16 @@ export default class WeetCubeWidget implements Projected {
     this.scheduleUpdate();
   }
 
+  setRotationFrequency(rotFreq: number) {
+    this._rotFreq = rotFreq;
+  }
+
+  rotationFrequency() {
+    return this._rotFreq;
+  }
+
   tick() {
-    const e = elapsed(this._lastPaint) / 500;
+    const e = elapsed(this._lastPaint);
     // this._input.Update(e);
     if (!this._frozen) {
       this._elapsed += e;
@@ -400,7 +413,7 @@ export default class WeetCubeWidget implements Projected {
         }
       }
     }
-    this.rotq = this._elapsed;
+    this.rotq = this._elapsed / this.rotationFrequency();
     // console.log("dataX=" + this.cubePainter._dataX);
 
     this._modeSwitched = false;
@@ -426,7 +439,7 @@ export default class WeetCubeWidget implements Projected {
     const xPos = cm[12];
     const yPos = cm[13];
     const zPos = cm[14];
-    /*if (audio) {
+    /* if (audio) {
       const listener = audio.listener;
       if (listener.positionX) {
         listener.positionX.value = xPos;
@@ -455,11 +468,11 @@ export default class WeetCubeWidget implements Projected {
       proj.width(),
       proj.height()
     );
-    //console.log("projection is" + projection.toString());
+    // console.log("projection is" + projection.toString());
     const viewMatrix = this.camera.getViewMatrix(null).multiplied(projection);
     this.camera.getViewMatrix(null);
-    //console.log("CameraViewMatrix is" + this.camera.getViewMatrix(null).toString());
-    //console.log("viewMatrix is " + viewMatrix.toString());
+    // console.log("CameraViewMatrix is" + this.camera.getViewMatrix(null).toString());
+    // console.log("viewMatrix is " + viewMatrix.toString());
     this._cubePainters.get(proj).render(viewMatrix);
     return !this._frozen;
   }

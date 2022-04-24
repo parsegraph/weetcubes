@@ -149,7 +149,7 @@ export default class WeetCubePainter {
     }
 
     const arr = new Float32Array(viewMatrix.length);
-    for(let i = 0; i < viewMatrix.length; ++i) {
+    for (let i = 0; i < viewMatrix.length; ++i) {
       arr[i] = viewMatrix[i];
     }
 

@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }, this);*/
 
- proj.container().setAttribute("tabIndex", "0");
+  proj.container().setAttribute("tabIndex", "0");
   proj.container().addEventListener("keydown", (event) => {
     console.log(event);
     if (event.key === "Escape") {

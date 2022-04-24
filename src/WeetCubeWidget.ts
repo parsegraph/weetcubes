@@ -341,7 +341,6 @@ export default class WeetCubeWidget implements Projected {
           c.rotate((this.rotq * 2 * j) / 10, 1, 0, 1);
           c.setPosition(3 * i, 3 * j, 3 * k);
           c.setScale(cubeSize, cubeSize, cubeSize);
-          // XXX Could be problems if this conversion is bad
           painter.drawCube(c.getModelMatrix().toArray());
           const makeAudio = Math.random() < 0.05;
           if (createAudioNodes && makeAudio) {
@@ -457,7 +456,6 @@ export default class WeetCubeWidget implements Projected {
       proj.height()
     );
     //console.log("projection is" + projection.toString());
-    console.log("cam parent", this.camera.parent);
     const viewMatrix = this.camera.getViewMatrix(null).multiplied(projection);
     this.camera.getViewMatrix(null);
     //console.log("CameraViewMatrix is" + this.camera.getViewMatrix(null).toString());

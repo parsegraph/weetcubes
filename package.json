@@ -20,6 +20,7 @@
     "parsegraph-compileprogram": "^2.2.9",
     "parsegraph-matrix": "^1.4.11",
     "parsegraph-method": "^1.4.22",
+    "parsegraph-physical": "^2.0.0",
     "parsegraph-projector": "^1.13.0",
     "parsegraph-timing": "^1.4.16",
     "parsegraph-timingbelt": "^1.7.1",

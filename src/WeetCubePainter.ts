@@ -1,55 +1,11 @@
 /* eslint-disable require-jsdoc */
-
 import { GLProvider, compileProgram } from "parsegraph-compileprogram";
-import { Float32List } from "parsegraph-collections";
 import Color from "parsegraph-color";
 import { Matrix4x4 } from "parsegraph-matrix";
-
 import alphaWeetPainterVertexShader from "./WeetPainter_VertexShader.glsl";
 import alphaWeetPainterFragmentShader from "./WeetPainter_FragmentShader.glsl";
 
-const makeCubeVertices = (cubeSize: number) => {
-  const width = cubeSize;
-  const length = cubeSize;
-  const height = cubeSize;
-  return [
-    // Front
-    [-width, length, height], // v0
-    [width, length, height], // v1
-    [width, length, -height], // v2
-    [-width, length, -height], // v3
-
-    // Back
-    [width, -length, height], // v4
-    [-width, -length, height], // v5
-    [-width, -length, -height], // v6
-    [width, -length, -height], // v7
-
-    // Left
-    [width, length, height], // v1
-    [width, -length, height], // v4
-    [width, -length, -height], // v7
-    [width, length, -height], // v2
-
-    // Right
-    [-width, -length, height], // v5
-    [-width, length, height], // v0
-    [-width, length, -height], // v3
-    [-width, -length, -height], // v6
-
-    // Top
-    [width, length, height], // v1
-    [-width, length, height], // v0
-    [-width, -length, height], // v5
-    [width, -length, height], // v4
-
-    // Bottom
-    [width, -length, -height], // v7
-    [-width, -length, -height], // v6
-    [-width, length, -height], // v3
-    [width, length, -height], // v2
-  ];
-};
+import { makeCubeVertices } from "./cube";
 const CUBE_VERTICES = makeCubeVertices(1);
 
 const CUBE_COLORS = [
@@ -73,7 +29,7 @@ export default class WeetCubePainter {
   _glProvider: GLProvider;
   _posBuffer: WebGLBuffer;
   _colorBuffer: WebGLBuffer;
-  _data: Float32List;
+  _data: Float32Array;
   _dataX: number;
 
   constructor(glProvider: GLProvider) {
@@ -106,7 +62,7 @@ export default class WeetCubePainter {
     if (!this._posBuffer) {
       this._posBuffer = gl.createBuffer();
     }
-    this._data = new Float32List(numCubes * 6 * 6 * 4);
+    this._data = new Float32Array(numCubes * 6 * 6 * 4);
     // console.log("Data is " + this._data.length + " floats large");
     this._dataX = 0;
 

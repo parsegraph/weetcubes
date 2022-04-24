@@ -1,39 +1,40 @@
-document.addEventListener("DOMContentLoaded", function (event) {
-  parsegraph_initialize();
-  const window = new parsegraph_Window();
-  const world = new parsegraph_World();
-  document.body.appendChild(window.container());
-  const belt = new parsegraph_TimingBelt();
-  belt.addWindow(window);
-  parsegraph_addEventMethod(top.window, "resize", belt.scheduleUpdate, belt);
+import { BasicProjector, Projection } from "parsegraph-projector";
+import TimingBelt from "parsegraph-timingbelt";
+import WeetCubeWidget from "./WeetCubeWidget";
+// import {IntervalTimer} from 'parsegraph-timing';
 
-  const widget = new alpha_WeetCubeWidget(window);
-  WIDGET = widget;
-  window.addWidget(widget);
+document.addEventListener("DOMContentLoaded", function () {
+  const proj = new BasicProjector();
+  document.body.appendChild(proj.container());
+  const belt = new TimingBelt();
+  top.window.addEventListener("resize", () => belt.scheduleUpdate());
 
-  const audioUpdate = null;
-  const backgroundAudioForcer = new parsegraph_IntervalTimer();
+  const widget = new WeetCubeWidget();
+  belt.addRenderable(new Projection(proj, widget));
+
+  /* const audioUpdate = null;
+  const backgroundAudioForcer = new IntervalTimer();
   backgroundAudioForcer.setDelay(0);
   backgroundAudioForcer.setListener(function () {
-    if (widget.TickIfNecessary()) {
+    if (widget.tickIfNecessary()) {
       widget.paint();
-      window.render();
+      widget.render(
     }
-  }, this);
+  }, this);*/
 
-  parsegraph_addEventListener(document, "keydown", function (event) {
+  proj.container().addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
-      widget._frozen = !widget._frozen;
+      widget.toggleFrozen();
     }
   });
 
   let started = false;
-  document.addEventListener("click", function (event) {
+  proj.container().addEventListener("click", () => {
     if (started) {
       return;
     }
     started = true;
-    window.startAudio();
-    backgroundAudioForcer.schedule();
+    proj.audio();
+    widget.scheduleUpdate();
   });
 }); // DOMContentLoaded

@@ -2,8 +2,14 @@
 
 import WeetCubePainter from "./WeetCubePainter";
 import { elapsed } from "parsegraph-timing";
-import { Projector } from "parsegraph-projector";
+import { Projected, Projector } from "parsegraph-projector";
 import Method from "parsegraph-method";
+import {
+  AlphaCamera,
+  BasicPhysical,
+  PhysicalMatrixMode,
+  quaternionFromAxisAndAngle,
+} from "parsegraph-physical";
 
 const randomFrequencyNodeCreator =
   (minFreq: number, freqRange: number) => (audio: AudioContext) => {
@@ -41,7 +47,7 @@ const fixedFrequencyNodeCreator =
   };
 
 const audioTransition = 1.2;
-export default class WeetCubeWidget {
+export default class WeetCubeWidget implements Projected {
   _modeSwitched: boolean;
   _audioCompressorOut: DynamicsCompressorNode;
   _xMax: number;
@@ -49,7 +55,7 @@ export default class WeetCubeWidget {
   _zMax: number;
   _frozen: boolean;
   _lastPaint: Date;
-  cubePainter: WeetCubePainter;
+  _cubePainters: Map<Projector, WeetCubePainter>;
   _elapsed: number;
   _freqs: number[];
   rotq: number;
@@ -60,33 +66,26 @@ export default class WeetCubeWidget {
   _modeAudioNodes: GainNode[];
   _nodesPainted: number;
   _audioNodePositions: number[];
-  _projector: Projector;
   _onUpdate: Method;
 
-  camera: any;
-  _input: any;
+  camera: AlphaCamera;
+  // _input: AlphaInput;
 
-  constructor(projector: Projector) {
-    if (!projector) {
-      throw new Error(
-        "A Projector must be provided when creating a WeetCubeWidget"
-      );
-    }
-    this._projector = projector;
+  constructor() {
     this._onUpdate = new Method();
 
     this.camera = new AlphaCamera();
-    this.camera.SetFovX(60);
-    this.camera.SetFarDistance(1000);
-    this.camera.SetNearDistance(0.1);
+    this.camera.setFovX(60);
+    this.camera.setFarDistance(1000);
+    this.camera.setNearDistance(0.1);
 
-    this._input = new AlphaInput(this.window, this.camera);
-    this._input.SetMouseSensitivity(0.4);
+    // this._input = new AlphaInput(proj, this.camera);
+    // this._input.SetMouseSensitivity(0.4);
     this._lastPaint = new Date();
 
-    this._input.SetOnKeyDown(this.onKeyDown, this);
+    // this._input.SetOnKeyDown(this.onKeyDown, this);
 
-    this.cubePainter = null;
+    this._cubePainters = new Map();
     this.rotq = 0;
     this._elapsed = 0;
     this._frozen = true;
@@ -162,15 +161,19 @@ export default class WeetCubeWidget {
     this._audioModes = [this.createSineAudioNode, this.createSawtoothAudioNode];
     */
 
-    this.camera.GetParent().SetPosition(-1, -1, this._zMax * -5.0);
+    (this.camera.getParent() as BasicPhysical).setPosition(
+      -1,
+      -1,
+      this._zMax * -5.0
+    );
     this.camera
-      .GetParent()
-      .SetOrientation(QuaternionFromAxisAndAngle(0, 1, 0, Math.PI));
+      .getParent()
+      .setOrientation(quaternionFromAxisAndAngle(0, 1, 0, Math.PI));
   }
 
-  handleEvent(eventType: string, eventData?: any) {
+  /* handleEvent(eventType: string, eventData?: any) {
     if (eventType === "tick") {
-      this.Tick();
+      this.tick();
       return true;
     } else if (eventType === "wheel") {
       return this._input.onWheel(eventData);
@@ -186,7 +189,7 @@ export default class WeetCubeWidget {
       return this._input.onKeyup(eventData);
     }
     return false;
-  }
+  }*/
 
   private createAudioNode(audio: AudioContext) {
     const creator = this._audioModes[this._currentAudioMode];
@@ -214,28 +217,28 @@ export default class WeetCubeWidget {
     this._modeSwitched = true;
   }
 
-  TickIfNecessary() {
+  tickIfNecessary() {
     // console.log("Necessary?", parsegraph_elapsed(this._lastPaint));
     if (elapsed(this._lastPaint) > 20) {
       console.log("Necessary:" + elapsed(this._lastPaint));
-      this.Tick();
+      this.tick();
       return true;
     }
     return false;
   }
 
-  Tick() {
+  toggleFrozen() {
+    this._frozen = !this._frozen;
+    this.scheduleUpdate();
+  }
+
+  tick() {
     const e = elapsed(this._lastPaint) / 500;
-    this._input.Update(e);
+    // this._input.Update(e);
     if (!this._frozen) {
       this._elapsed += e;
     }
-  }
-
-  refresh() {
-    if (this.cubePainter) {
-      this.cubePainter.initBuffer(this._xMax * this._yMax * this._zMax);
-    }
+    return false;
   }
 
   setMax(max: number) {
@@ -264,25 +267,28 @@ export default class WeetCubeWidget {
     this.rotq = rotq;
   }
 
-  projector() {
-    return this._projector;
+  setOnScheduleUpdate(func: Function, obj?: object) {
+    this._onUpdate.set(func, obj);
   }
 
-  audio() {
-    return (
-      this.projector() &&
-      this.projector().hasAudio() &&
-      this.projector().audio()
-    );
+  refresh() {
+    this.scheduleUpdate();
   }
 
-  paint() {
-    const audio = this.audio();
-    if (!this.cubePainter) {
-      this.cubePainter = new WeetCubePainter(this.projector().glProvider());
-      this.cubePainter.initBuffer(this._xMax * this._yMax * this._zMax);
+  scheduleUpdate() {
+    this._onUpdate.call();
+  }
+
+  paint(proj: Projector) {
+    const audio = proj.hasAudio() ? proj.audio() : null;
+    let painter: WeetCubePainter;
+    if (!this._cubePainters.has(proj)) {
+      painter = new WeetCubePainter(proj.glProvider());
+      painter.initBuffer(this._xMax * this._yMax * this._zMax);
+      this._cubePainters.set(proj, painter);
     } else {
-      this.cubePainter.clear();
+      painter = this._cubePainters.get(proj);
+      painter.clear();
     }
 
     if (audio && !this._audioOut) {
@@ -310,7 +316,7 @@ export default class WeetCubeWidget {
     }
     const createAudioNodes = audio && this._audioNodes.length == 0;
 
-    const c = new Physical(this.camera);
+    const c = new BasicPhysical(this.camera);
     let az = 0;
 
     this._nodesPainted = 0;
@@ -321,17 +327,18 @@ export default class WeetCubeWidget {
     for (let i = 0; i < this._xMax; ++i) {
       for (let j = 0; j < this._yMax; ++j) {
         for (let k = 0; k < this._zMax; ++k) {
-          c.modelMode = PHYSICAL_ROTATE_TRANSLATE_SCALE;
-          c.SetScale(1, 1, 1);
-          c.orientation.Set(0, 0, 0, 1);
-          c.position.Set(0, 0, 0);
-          c.scale.Set(1, 1, 1);
-          c.Rotate((this.rotq * 2 * k) / 10, 0, 1, 1);
-          c.Rotate((this.rotq * 2 * i) / 15, 1, 0, 0);
-          c.Rotate((this.rotq * 2 * j) / 10, 1, 0, 1);
-          c.SetPosition(3 * i, 3 * j, 3 * k);
-          c.SetScale(cubeSize, cubeSize, cubeSize);
-          this.cubePainter.drawCube(c.GetModelMatrix());
+          c.modelMode = PhysicalMatrixMode.ROTATE_TRANSLATE_SCALE;
+          c.setScale(1, 1, 1);
+          c.orientation.set(0, 0, 0, 1);
+          c.position.set(0, 0, 0);
+          c.scale.set(1, 1, 1);
+          c.rotate((this.rotq * 2 * k) / 10, 0, 1, 1);
+          c.rotate((this.rotq * 2 * i) / 15, 1, 0, 0);
+          c.rotate((this.rotq * 2 * j) / 10, 1, 0, 1);
+          c.setPosition(3 * i, 3 * j, 3 * k);
+          c.setScale(cubeSize, cubeSize, cubeSize);
+          // XXX Could be problems if this conversion is bad
+          painter.drawCube(c.getModelMatrix().toArray());
           const makeAudio = Math.random() < 0.05;
           if (createAudioNodes && makeAudio) {
             const node = this.createAudioNode(audio);
@@ -367,7 +374,7 @@ export default class WeetCubeWidget {
           }
 
           if (panner) {
-            const wv = c.GetModelMatrix();
+            const wv = c.getModelMatrix();
             let cx;
             let cy;
             let cz;
@@ -395,28 +402,20 @@ export default class WeetCubeWidget {
 
     this._modeSwitched = false;
     this._lastPaint = new Date();
-    this._onUpdate.call();
+    return false;
   }
 
-  setUpdateListener(listener: () => void, listenerThisArg?: object): void {
-    this._onUpdate.set(listener, listenerThisArg);
-  }
-
-  gl() {
-    return this.projector().glProvider().gl();
-  }
-
-  render(width: number, height: number) {
-    if (!this.cubePainter) {
-      return;
+  render(proj: Projector) {
+    if (!this._cubePainters.has(proj)) {
+      return true;
     }
-    const gl = this.gl();
+    const gl = proj.glProvider().gl();
     gl.enable(gl.DEPTH_TEST);
     gl.enable(gl.CULL_FACE);
 
-    const audio = this.audio();
+    const audio = proj.hasAudio() ? proj.audio() : null;
 
-    const cm = this.camera.GetParent().GetModelMatrix();
+    const cm = this.camera.getParent().getModelMatrix();
     const xPos = cm[12];
     const yPos = cm[13];
     const zPos = cm[14];
@@ -430,8 +429,8 @@ export default class WeetCubeWidget {
         listener.setPosition(xPos, yPos, zPos);
       }
       if (listener.forwardX) {
-        const forV = cm.Transform(0, 0, 1);
-        const upV = cm.Transform(0, 1, 0);
+        const forV = cm.transform(0, 0, 1);
+        const upV = cm.transform(0, 1, 0);
         // console.log("UP", upV[0], upV[1], upV[2]);
         listener.forwardX.setValueAtTime(forV[0], audio.currentTime);
         listener.forwardY.setValueAtTime(forV[1], audio.currentTime);
@@ -445,11 +444,27 @@ export default class WeetCubeWidget {
     // console.log(xPos + ", " + yPos + ", " + zPos);
 
     gl.clear(gl.DEPTH_BUFFER_BIT);
-    const projection = this.camera.UpdateProjection(width, height);
+    const projection = this.camera.updateProjection(
+      proj.width(),
+      proj.height()
+    );
     // console.log("projection is" + projection.toString());
-    const viewMatrix = this.camera.GetViewMatrix().Multiplied(projection);
+    const viewMatrix = this.camera.getViewMatrix(null).multiplied(projection);
     // console.log("CameraViewMatrix is" + this.camera.GetViewMatrix().toString());
     // console.log("viewMatrix is " + viewMatrix.toString());
-    this.cubePainter.render(viewMatrix);
+    this._cubePainters.get(proj).render(viewMatrix);
+  }
+
+  unmount(proj: Projector) {
+    if (this._cubePainters.has(proj)) {
+      const painter = this._cubePainters.get(proj);
+      painter.clear();
+      this._cubePainters.delete(proj);
+    }
+  }
+
+  dispose() {
+    this._cubePainters.forEach((painter) => painter.clear());
+    this._cubePainters.clear();
   }
 }

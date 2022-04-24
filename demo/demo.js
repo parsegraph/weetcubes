@@ -37,11 +37,13 @@ const root = getRootPath();
 
 async function getDemos() {
   return new Promise((respond, reject) => {
-    glob("www/*.html", {}, function (err, files) {
+    glob("../www/*.html", {}, function (err, files) {
       if (err) {
+        console.log(err);
         reject(err);
       }
       // files is an array of filenames.
+      console.log(files);
       respond(
         files.map((file) => {
           const m = file.match(/www\/(\w+)\.html/);
@@ -83,9 +85,9 @@ app.get(root, async (req, res) => {
   res.end(resp);
 });
 
-app.use(root, express.static("./src"));
-app.use(root, express.static("./dist"));
-app.use(root, express.static("./www"));
+app.use(root, express.static("../src"));
+app.use(root, express.static("../dist"));
+app.use(root, express.static("../www"));
 
 app.listen(port, () => {
   console.log(

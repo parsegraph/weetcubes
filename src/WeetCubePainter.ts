@@ -148,11 +148,16 @@ export default class WeetCubePainter {
       throw new Error("A viewMatrix must be provided");
     }
 
+    const arr = new Float32Array(viewMatrix.length);
+    for(let i = 0; i < viewMatrix.length; ++i) {
+      arr[i] = viewMatrix[i];
+    }
+
     // Render faces.
     const gl = this.gl();
     // gl.disable(gl.CULL_FACE);
     gl.useProgram(this.faceProgram);
-    gl.uniformMatrix4fv(this.uWorld, false, viewMatrix);
+    gl.uniformMatrix4fv(this.uWorld, false, arr);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this._posBuffer);
     // console.log("dataX * sizeof(float = " + 4*this._dataX);

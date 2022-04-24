@@ -5,9 +5,10 @@ import WeetCubeWidget from "./WeetCubeWidget";
 
 document.addEventListener("DOMContentLoaded", function () {
   const proj = new BasicProjector();
-  document.body.appendChild(proj.container());
+  const container = document.getElementById("demo");
+  container.appendChild(proj.container());
   const belt = new TimingBelt();
-  top.window.addEventListener("resize", () => belt.scheduleUpdate());
+  container.addEventListener("resize", () => belt.scheduleUpdate());
 
   const widget = new WeetCubeWidget();
   belt.addRenderable(new Projection(proj, widget));
@@ -22,18 +23,15 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }, this);*/
 
+ proj.container().setAttribute("tabIndex", "0");
   proj.container().addEventListener("keydown", (event) => {
+    console.log(event);
     if (event.key === "Escape") {
       widget.toggleFrozen();
     }
   });
 
-  let started = false;
   proj.container().addEventListener("click", () => {
-    if (started) {
-      return;
-    }
-    started = true;
     proj.audio();
     widget.scheduleUpdate();
   });

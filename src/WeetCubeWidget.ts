@@ -10,6 +10,7 @@ import {
   PhysicalMatrixMode,
   quaternionFromAxisAndAngle,
 } from "parsegraph-physical";
+import {Matrix4x4} from 'parsegraph-matrix';
 
 const randomFrequencyNodeCreator =
   (minFreq: number, freqRange: number) => (audio: AudioContext) => {
@@ -229,6 +230,9 @@ export default class WeetCubeWidget implements Projected {
 
   toggleFrozen() {
     this._frozen = !this._frozen;
+    if (!this._frozen) {
+      this._lastPaint = new Date();
+    }
     this.scheduleUpdate();
   }
 
@@ -409,7 +413,11 @@ export default class WeetCubeWidget implements Projected {
     if (!this._cubePainters.has(proj)) {
       return true;
     }
+    proj.render();
     const gl = proj.glProvider().gl();
+    gl.clearColor(0, 0, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.viewport(0, 0, proj.width(), proj.height());
     gl.enable(gl.DEPTH_TEST);
     gl.enable(gl.CULL_FACE);
 
@@ -419,7 +427,7 @@ export default class WeetCubeWidget implements Projected {
     const xPos = cm[12];
     const yPos = cm[13];
     const zPos = cm[14];
-    if (audio) {
+    /*if (audio) {
       const listener = audio.listener;
       if (listener.positionX) {
         listener.positionX.value = xPos;
@@ -440,7 +448,7 @@ export default class WeetCubeWidget implements Projected {
         listener.upZ.setValueAtTime(upV[2], audio.currentTime);
         // console.log("Setting orientation:" + forV[0] + ", " + forV[1] + ", " + forV[2]);
       }
-    }
+    }*/
     // console.log(xPos + ", " + yPos + ", " + zPos);
 
     gl.clear(gl.DEPTH_BUFFER_BIT);
@@ -448,11 +456,14 @@ export default class WeetCubeWidget implements Projected {
       proj.width(),
       proj.height()
     );
-    // console.log("projection is" + projection.toString());
+    //console.log("projection is" + projection.toString());
+    console.log("cam parent", this.camera.parent);
     const viewMatrix = this.camera.getViewMatrix(null).multiplied(projection);
-    // console.log("CameraViewMatrix is" + this.camera.GetViewMatrix().toString());
-    // console.log("viewMatrix is " + viewMatrix.toString());
+    this.camera.getViewMatrix(null);
+    //console.log("CameraViewMatrix is" + this.camera.getViewMatrix(null).toString());
+    //console.log("viewMatrix is " + viewMatrix.toString());
     this._cubePainters.get(proj).render(viewMatrix);
+    return !this._frozen;
   }
 
   unmount(proj: Projector) {

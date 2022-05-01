@@ -15,7 +15,6 @@
   "homepage": "https://github.com/parsegraph/weetcubes#readme",
   "dependencies": {
     "glslify-loader": "^2.0.0",
-    "parsegraph-collections": "^1.4.5",
     "parsegraph-color": "^1.4.7",
     "parsegraph-compileprogram": "^2.2.9",
     "parsegraph-matrix": "^1.4.11",

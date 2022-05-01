@@ -16,13 +16,13 @@
   "dependencies": {
     "glslify-loader": "^2.0.0",
     "parsegraph-color": "^1.4.7",
-    "parsegraph-compileprogram": "^2.2.9",
-    "parsegraph-matrix": "^1.4.11",
+    "parsegraph-compileprogram": "^2.2.15",
+    "parsegraph-matrix": "^1.4.12",
     "parsegraph-method": "^1.4.22",
-    "parsegraph-physical": "^2.0.0",
-    "parsegraph-projector": "^1.13.0",
+    "parsegraph-physical": "^2.0.10",
+    "parsegraph-projector": "^1.14.0",
     "parsegraph-timing": "^1.4.16",
-    "parsegraph-timingbelt": "^1.7.1",
+    "parsegraph-timingbelt": "^1.7.11",
     "ts-shader-loader": "^1.0.6",
     "webgl-mock": "^0.1.7"
   },

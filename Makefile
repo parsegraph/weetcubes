@@ -5,6 +5,7 @@ SCRIPT_FILES = \
 	src/WeetCubePainter.ts \
 	src/glsl.d.ts \
 	src/WeetCubeWidget.ts \
+	src/cube.ts \
 	src/demo.ts \
 	test/test.ts
 

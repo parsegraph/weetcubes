@@ -1,6 +1,6 @@
 {
   "name": "parsegraph-weetcubes",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "Animated 3D cubes with eerie sound",
   "main": "dist/src/index.js",
   "repository": {
@@ -14,17 +14,8 @@
   },
   "homepage": "https://github.com/parsegraph/weetcubes#readme",
   "dependencies": {
-    "glslify-loader": "^2.0.0",
-    "parsegraph-color": "^1.4.7",
-    "parsegraph-compileprogram": "^2.2.15",
-    "parsegraph-matrix": "^1.4.12",
-    "parsegraph-method": "^1.4.22",
     "parsegraph-physical": "^2.0.10",
-    "parsegraph-projector": "^1.14.0",
-    "parsegraph-timing": "^1.4.16",
-    "parsegraph-timingbelt": "^1.7.11",
-    "ts-shader-loader": "^1.0.6",
-    "webgl-mock": "^0.1.7"
+    "parsegraph-projector": "^1.14.2"
   },
   "peerDependencies": {
     "parsegraph-checkglerror": "^1.5.3",
@@ -53,10 +44,15 @@
     "jest": "^28.0.3",
     "jsdom": "^19.0.0",
     "jsdom-global": "^3.0.2",
+    "parsegraph-checkglerror": "^1.5.3",
+    "parsegraph-log": "^1.7.3",
     "prettier": "^2.6.2",
     "raw-loader": "^4.0.2",
     "source-map-loader": "^3.0.1",
     "source-map-support": "^0.5.21",
+    "glslify-loader": "^2.0.0",
+    "ts-shader-loader": "^1.0.6",
+    "webgl-mock": "^0.1.7",
     "ts-loader": "^9.3.0",
     "ts-node": "^10.7.0",
     "typedoc": "^0.22.15",

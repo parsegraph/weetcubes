@@ -15,7 +15,7 @@
   "homepage": "https://github.com/parsegraph/weetcubes#readme",
   "dependencies": {
     "parsegraph-physical": "^2.0.10",
-    "parsegraph-projector": "^1.14.2"
+    "parsegraph-projector": "^1.14.3"
   },
   "peerDependencies": {
     "parsegraph-checkglerror": "^1.5.3",

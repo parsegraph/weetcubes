@@ -4,6 +4,7 @@ SCRIPT_FILES = \
 	src/index.ts \
 	src/WeetCubePainter.ts \
 	src/glsl.d.ts \
+	src/AlphaInput.ts \
 	src/WeetCubeWidget.ts \
 	src/cube.ts \
 	src/demo.ts \

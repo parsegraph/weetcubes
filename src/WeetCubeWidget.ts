@@ -10,8 +10,7 @@ import {
   PhysicalMatrixMode,
   quaternionFromAxisAndAngle,
 } from "parsegraph-physical";
-import { Matrix4x4 } from "parsegraph-matrix";
-import AlphaInput from './AlphaInput';
+import AlphaInput from "./AlphaInput";
 
 const ROTATION_FREQUENCY = 2000;
 
@@ -179,20 +178,24 @@ export default class WeetCubeWidget implements Projected {
   }
 
   handleEvent(eventType: string, eventData?: any) {
-    if (eventType === "wheel") {
-      return this._input.onWheel(eventData);
-    } else if (eventType === "mousemove") {
-      return this._input.onMousemove(eventData);
-    } else if (eventType === "mousedown") {
-      return this._input.onMousedown(eventData);
-    } else if (eventType === "mouseup") {
-      return this._input.onMouseup(eventData);
-    } else if (eventType === "keydown") {
-      return this._input.onKeydown(eventData);
-    } else if (eventType === "keyup") {
-      return this._input.onKeyup(eventData);
-    }
-    return false;
+    const callListener = ()=>{
+        if (eventType === "wheel") {
+        return this._input.onWheel(eventData);
+      } else if (eventType === "mousemove") {
+        return this._input.onMousemove(eventData);
+      } else if (eventType === "mousedown") {
+        return this._input.onMousedown(eventData);
+      } else if (eventType === "mouseup") {
+        return this._input.onMouseup(eventData);
+      } else if (eventType === "keydown") {
+        return this._input.onKeydown(eventData);
+      } else if (eventType === "keyup") {
+        return this._input.onKeyup(eventData);
+      }
+    };
+    const rv = callListener();
+    this.scheduleUpdate();
+    return rv;
   }
 
   private createAudioNode(audio: AudioContext) {
@@ -232,6 +235,7 @@ export default class WeetCubeWidget implements Projected {
   }
 
   toggleFrozen() {
+    console.log("Toggle frozen");
     this._frozen = !this._frozen;
     if (!this._frozen) {
       this._lastPaint = new Date();
@@ -248,11 +252,11 @@ export default class WeetCubeWidget implements Projected {
   }
 
   tick() {
-    const e = elapsed(this._lastPaint);
+    const e = elapsed(this._lastPaint) / 1000;
     if (!isNaN(e)) {
       this._input.Update(e);
       if (!this._frozen) {
-        this._elapsed += e;
+        this._elapsed += e * 1000;
       }
     }
     return false;
@@ -304,23 +308,23 @@ export default class WeetCubeWidget implements Projected {
       painter.initBuffer(this._xMax * this._yMax * this._zMax);
       this._cubePainters.set(proj, painter);
 
-      const cont = proj.getDOMContainer();
-      cont.addEventListener("mousedown", e=>{
+      const cont = proj.container();
+      cont.addEventListener("mousedown", (e) => {
         this.handleEvent("mousedown", e);
       });
-      cont.addEventListener("mouseup", e=>{
+      cont.addEventListener("mouseup", (e) => {
         this.handleEvent("mouseup", e);
       });
-      cont.addEventListener("mousemove", e=>{
+      cont.addEventListener("mousemove", (e) => {
         this.handleEvent("mousemove", e);
       });
-      cont.addEventListener("keyup", e=>{
+      cont.addEventListener("keyup", (e) => {
         this.handleEvent("keyup", e);
       });
-      cont.addEventListener("keydown", e=>{
+      cont.addEventListener("keydown", (e) => {
         this.handleEvent("keydown", e);
       });
-      cont.addEventListener("wheel", e=>{
+      cont.addEventListener("wheel", (e) => {
         this.handleEvent("wheel", e);
       });
     } else {
@@ -360,7 +364,7 @@ export default class WeetCubeWidget implements Projected {
     let panner;
 
     const cubeSize = 1;
-    // console.log("Painting", elapsed);
+    //console.log("Painting", elapsed);
     for (let i = 0; i < this._xMax; ++i) {
       for (let j = 0; j < this._yMax; ++j) {
         for (let k = 0; k < this._zMax; ++k) {
@@ -459,7 +463,7 @@ export default class WeetCubeWidget implements Projected {
     const xPos = cm[12];
     const yPos = cm[13];
     const zPos = cm[14];
-    /* if (audio) {
+    if (audio) {
       const listener = audio.listener;
       if (listener.positionX) {
         listener.positionX.value = xPos;
@@ -480,7 +484,7 @@ export default class WeetCubeWidget implements Projected {
         listener.upZ.setValueAtTime(upV[2], audio.currentTime);
         // console.log("Setting orientation:" + forV[0] + ", " + forV[1] + ", " + forV[2]);
       }
-    }*/
+    }
     // console.log(xPos + ", " + yPos + ", " + zPos);
 
     gl.clear(gl.DEPTH_BUFFER_BIT);

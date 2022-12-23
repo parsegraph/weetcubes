@@ -29,39 +29,39 @@
 	if done then return end;
 	done = true;
 */
-import {AlphaCamera, BasicPhysical} from 'parsegraph-physical';
-import normalizeWheel from 'parsegraph-normalizewheel';
+import { AlphaCamera, BasicPhysical } from "parsegraph-physical";
+import normalizeWheel from "parsegraph-normalizewheel";
 
-function alpha_GetButtonName(buttonIndex:number) {
+function alpha_GetButtonName(buttonIndex: number) {
   switch (buttonIndex) {
     case 0:
-      return 'LeftMouseButton';
+      return "LeftMouseButton";
     case 2:
-      return 'RightMouseButton';
+      return "RightMouseButton";
     case 1:
-      return 'MiddleMouseButton';
+      return "MiddleMouseButton";
   }
   return null;
 }
 
 export default class AlphaInput {
-  startX:number;
-  startY:number;
-  endX:number;
-  endY:number;
-  mouseWheelUp:number;
-  mouseWheelDown:number;
-  grabbed:any;
-  camera:AlphaCamera;
-  mouseSensitivityX:number;
-  mouseSensitivityY:number;
+  startX: number;
+  startY: number;
+  endX: number;
+  endY: number;
+  mouseWheelUp: number;
+  mouseWheelDown: number;
+  grabbed: any;
+  camera: AlphaCamera;
+  mouseSensitivityX: number;
+  mouseSensitivityY: number;
 
-  _keyDownListener: (button:string)=>boolean;
+  _keyDownListener: (button: string) => boolean;
   _keyDownThisObject: any;
-  _buttons: { [button:string]: number };
+  _buttons: { [button: string]: number };
   _done: boolean;
 
-  constructor(camera:AlphaCamera) {
+  constructor(camera: AlphaCamera) {
     this.SetMouseSensitivityX(0.005);
     this.SetMouseSensitivityY(0.005);
 
@@ -76,23 +76,23 @@ export default class AlphaInput {
     this._buttons = {};
   }
 
-  onKeyup(event:KeyboardEvent) {
+  onKeyup(event: KeyboardEvent) {
     this._buttons[event.key.toLowerCase()] = null;
     return true;
-  };
+  }
 
-  onKeydown(event:KeyboardEvent) {
-    if (this._keyDownListener) {
-      return this._keyDownListener.call(this._keyDownThisObject, event);
-    }
+  onKeydown(event: KeyboardEvent) {
     if (event.ctrlKey || event.altKey || event.metaKey) {
       return true;
     }
     this._buttons[event.key.toLowerCase()] = 1;
+    if (this._keyDownListener) {
+      return this._keyDownListener.call(this._keyDownThisObject, event);
+    }
     return true;
-  };
+  }
 
-  onMousedown(event:MouseEvent) {
+  onMousedown(event: MouseEvent) {
     let button;
     let x;
     let y;
@@ -107,9 +107,9 @@ export default class AlphaInput {
     this.endX = x;
     this.endY = y;
     return true;
-  };
+  }
 
-  onMouseup(event:MouseEvent) {
+  onMouseup(event: MouseEvent) {
     let button;
     let x;
     let y;
@@ -122,9 +122,9 @@ export default class AlphaInput {
     this.endX = x;
     this.endY = y;
     return true;
-  };
+  }
 
-  onMousemove(event:MouseEvent) {
+  onMousemove(event: MouseEvent) {
     let x;
     let y;
     x = event.x;
@@ -132,9 +132,9 @@ export default class AlphaInput {
     this.endX = x;
     this.endY = y;
     return true;
-  };
+  }
 
-  onWheel(event:WheelEvent) {
+  onWheel(event: WheelEvent) {
     const wheel = normalizeWheel(event).spinY;
     if (wheel > 0) {
       this.mouseWheelUp = this.mouseWheelUp + wheel;
@@ -143,38 +143,38 @@ export default class AlphaInput {
       this.mouseWheelDown = this.mouseWheelDown - wheel;
     }
     return true;
-  };
+  }
 
-  SetOnKeyDown(listener: (button:string)=>boolean, thisObject?:any) {
+  SetOnKeyDown(listener: (button: string) => boolean, thisObject?: any) {
     this._keyDownListener = listener;
     this._keyDownThisObject = thisObject;
-  };
+  }
 
-  Get(key:string) {
+  Get(key: string) {
     return this._buttons[key] ? 1 : 0;
-  };
+  }
 
-  SetMouseSensitivityX(sensitivity:number) {
+  SetMouseSensitivityX(sensitivity: number) {
     this.mouseSensitivityX = sensitivity;
-  };
+  }
 
   GetMouseSensitivityX() {
     return this.mouseSensitivityX;
-  };
+  }
 
-  SetMouseSensitivityY(sensitivity:number) {
+  SetMouseSensitivityY(sensitivity: number) {
     this.mouseSensitivityY = sensitivity;
-  };
+  }
 
   GetMouseSensitivityY() {
     return this.mouseSensitivityY;
-  };
+  }
 
   // quick set both of them
-  SetMouseSensitivity(sensitivity:number) {
+  SetMouseSensitivity(sensitivity: number) {
     this.SetMouseSensitivityX(sensitivity);
     this.SetMouseSensitivityY(sensitivity);
-  };
+  }
 
   MouseLeft() {
     if (this.endX < this.startX) {
@@ -184,7 +184,7 @@ export default class AlphaInput {
     }
 
     return 0;
-  };
+  }
 
   MouseRight() {
     if (this.endX > this.startX) {
@@ -194,7 +194,7 @@ export default class AlphaInput {
     }
 
     return 0;
-  };
+  }
 
   MouseUp() {
     if (this.endY > this.startY) {
@@ -204,7 +204,7 @@ export default class AlphaInput {
     }
 
     return 0;
-  };
+  }
 
   MouseDown() {
     if (this.endY < this.startY) {
@@ -214,75 +214,77 @@ export default class AlphaInput {
     }
 
     return 0;
-  };
+  }
 
   // mouse wheel data is stored in 1/8 of a degree
   // this returns how many ticks of a mousewheel of standard resolution
   // has been seen before an Input:Update()
   MouseWheelUp() {
     return this.mouseWheelUp / 120;
-  };
+  }
 
   MouseWheelDown() {
     return this.mouseWheelDown / 120;
-  };
+  }
 
   MouseWheelDegreesUp() {
     return this.mouseWheelUp / 8;
-  };
+  }
 
   MouseWheelDegreesDown() {
     return this.mouseWheelDown / 8;
-  };
+  }
 
   /**
    * Sets the start to the end, and clears mousewheel totals.
    */
-  Update(elapsed:number) {
-    console.log("Updating with elapsed: " + elapsed);
-    if (this.Get('Shift') > 0) {
+  Update(elapsed: number) {
+    //console.log("Updating with elapsed: " + elapsed);
+    if (this.Get("Shift") > 0) {
       elapsed = elapsed * 10;
     }
 
-    if (this.Get('Shift') > 0) {
+    if (this.Get("Shift") > 0) {
       elapsed = elapsed / 10;
     }
 
-    console.log("LeftMouseButton: " + this.Get("LeftMouseButton"));
-    console.log("MouseLeft: " + this.MouseLeft() * elapsed);
-    console.log("MouseLeft: " + (this.Get("LeftMouseButton") * this.MouseLeft() * elapsed));
-    console.log("LeftMouse: " + this.Get("LeftMouseButton"));
-    console.log("TurnLeft: " + this.MouseLeft() * elapsed);
+    //console.log("LeftMouseButton: " + this.Get("LeftMouseButton"));
+    //console.log("MouseLeft: " + this.MouseLeft() * elapsed);
+    //console.log(
+      //"MouseLeft: " + this.Get("LeftMouseButton") * this.MouseLeft() * elapsed
+    //);
+    //console.log("LeftMouse: " + this.Get("LeftMouseButton"));
+    //console.log("TurnLeft: " + this.MouseLeft() * elapsed);
     const phys = this.camera.getParent() as BasicPhysical;
-    phys.turnLeft(this.Get('LeftMouseButton') * this.MouseLeft() * elapsed);
-    phys.turnRight(this.Get('LeftMouseButton') * this.MouseRight() * elapsed);
-    phys.pitchUp(-this.Get('LeftMouseButton') * this.MouseUp() * elapsed);
-    phys.pitchDown(this.Get('LeftMouseButton') * this.MouseDown() * elapsed);
+    phys.turnLeft(this.Get("LeftMouseButton") * this.MouseLeft() * elapsed);
+    phys.turnRight(this.Get("LeftMouseButton") * this.MouseRight() * elapsed);
+    phys.pitchUp(-this.Get("LeftMouseButton") * this.MouseUp() * elapsed);
+    phys.pitchDown(this.Get("LeftMouseButton") * this.MouseDown() * elapsed);
     this.camera.moveForward(this.MouseWheelDegreesUp() * elapsed);
     this.camera.moveBackward(this.MouseWheelDegreesDown() * elapsed);
     // this.camera.ZoomIn(this.Get("y"), elapsed);
     // this.camera.ZoomOut(this.Get("h"), elapsed);
 
-    phys.moveForward(100 * this.Get('t') * elapsed);
-    phys.moveBackward(100 * this.Get('g') * elapsed);
-    phys.moveLeft(100 * this.Get('f') * elapsed);
-    phys.moveRight(100 * this.Get('h') * elapsed);
+    phys.moveForward(100 * this.Get("t") * elapsed);
+    phys.moveBackward(100 * this.Get("g") * elapsed);
+    phys.moveLeft(100 * this.Get("f") * elapsed);
+    phys.moveRight(100 * this.Get("h") * elapsed);
 
-    phys.moveForward(this.Get('w') * elapsed);
-    phys.moveBackward(this.Get('s') * elapsed);
-    phys.moveLeft(this.Get('a') * elapsed);
-    phys.moveRight(this.Get('d') * elapsed);
-    phys.moveUp(this.Get(' ') * elapsed);
-    phys.moveDown(this.Get('Shift') * elapsed);
+    phys.moveForward(this.Get("w") * elapsed);
+    phys.moveBackward(this.Get("s") * elapsed);
+    phys.moveLeft(this.Get("a") * elapsed);
+    phys.moveRight(this.Get("d") * elapsed);
+    phys.moveUp(this.Get(" ") * elapsed);
+    phys.moveDown(this.Get("Shift") * elapsed);
 
-    phys.yawLeft(this.Get('j') * elapsed);
-    phys.yawRight(this.Get('l') * elapsed);
-    phys.pitchUp(this.Get('k') * elapsed);
-    phys.pitchDown(this.Get('i') * elapsed);
-    phys.rollLeft(this.Get('u') * elapsed);
-    phys.rollRight(this.Get('o') * elapsed);
+    phys.yawLeft(this.Get("j") * elapsed);
+    phys.yawRight(this.Get("l") * elapsed);
+    phys.pitchUp(this.Get("k") * elapsed);
+    phys.pitchDown(this.Get("i") * elapsed);
+    phys.rollLeft(this.Get("u") * elapsed);
+    phys.rollRight(this.Get("o") * elapsed);
 
-    if (this.Get('RightMouseButton') > 0) {
+    if (this.Get("RightMouseButton") > 0) {
       if (!this._done) {
         this.camera.alignParentToMy(0, 1);
         this._done = true;
@@ -294,5 +296,5 @@ export default class AlphaInput {
     this.startY = this.endY;
     this.mouseWheelUp = 0;
     this.mouseWheelDown = 0;
-  };
+  }
 }

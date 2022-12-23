@@ -11,6 +11,7 @@ import {
   quaternionFromAxisAndAngle,
 } from "parsegraph-physical";
 import { Matrix4x4 } from "parsegraph-matrix";
+import AlphaInput from './AlphaInput';
 
 const ROTATION_FREQUENCY = 2000;
 
@@ -73,7 +74,7 @@ export default class WeetCubeWidget implements Projected {
   _rotFreq: number;
 
   camera: AlphaCamera;
-  // _input: AlphaInput;
+  _input: AlphaInput;
 
   constructor() {
     this._onUpdate = new Method();
@@ -85,11 +86,11 @@ export default class WeetCubeWidget implements Projected {
 
     this._rotFreq = ROTATION_FREQUENCY;
 
-    // this._input = new AlphaInput(proj, this.camera);
-    // this._input.SetMouseSensitivity(0.4);
+    this._input = new AlphaInput(this.camera);
+    this._input.SetMouseSensitivity(0.4);
     this._lastPaint = new Date();
 
-    // this._input.SetOnKeyDown(this.onKeyDown, this);
+    this._input.SetOnKeyDown(this.onKeyDown, this);
 
     this._cubePainters = new Map();
     this.rotq = 0;
@@ -177,11 +178,8 @@ export default class WeetCubeWidget implements Projected {
       .setOrientation(quaternionFromAxisAndAngle(0, 1, 0, Math.PI));
   }
 
-  /* handleEvent(eventType: string, eventData?: any) {
-    if (eventType === "tick") {
-      this.tick();
-      return true;
-    } else if (eventType === "wheel") {
+  handleEvent(eventType: string, eventData?: any) {
+    if (eventType === "wheel") {
       return this._input.onWheel(eventData);
     } else if (eventType === "mousemove") {
       return this._input.onMousemove(eventData);
@@ -195,7 +193,7 @@ export default class WeetCubeWidget implements Projected {
       return this._input.onKeyup(eventData);
     }
     return false;
-  }*/
+  }
 
   private createAudioNode(audio: AudioContext) {
     const creator = this._audioModes[this._currentAudioMode];
@@ -251,9 +249,11 @@ export default class WeetCubeWidget implements Projected {
 
   tick() {
     const e = elapsed(this._lastPaint);
-    // this._input.Update(e);
-    if (!this._frozen) {
-      this._elapsed += e;
+    if (!isNaN(e)) {
+      this._input.Update(e);
+      if (!this._frozen) {
+        this._elapsed += e;
+      }
     }
     return false;
   }
@@ -303,6 +303,26 @@ export default class WeetCubeWidget implements Projected {
       painter = new WeetCubePainter(proj.glProvider());
       painter.initBuffer(this._xMax * this._yMax * this._zMax);
       this._cubePainters.set(proj, painter);
+
+      const cont = proj.getDOMContainer();
+      cont.addEventListener("mousedown", e=>{
+        this.handleEvent("mousedown", e);
+      });
+      cont.addEventListener("mouseup", e=>{
+        this.handleEvent("mouseup", e);
+      });
+      cont.addEventListener("mousemove", e=>{
+        this.handleEvent("mousemove", e);
+      });
+      cont.addEventListener("keyup", e=>{
+        this.handleEvent("keyup", e);
+      });
+      cont.addEventListener("keydown", e=>{
+        this.handleEvent("keydown", e);
+      });
+      cont.addEventListener("wheel", e=>{
+        this.handleEvent("wheel", e);
+      });
     } else {
       painter = this._cubePainters.get(proj);
       painter.clear();

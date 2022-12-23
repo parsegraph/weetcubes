@@ -1,4 +1,5 @@
 import WeetCubeWidget from "./WeetCubeWidget";
 import WeetCubePainter from "./WeetCubePainter";
+import AlphaInput from "./AlphaInput";
 
-export { WeetCubeWidget, WeetCubePainter };
+export { AlphaInput, WeetCubeWidget, WeetCubePainter };

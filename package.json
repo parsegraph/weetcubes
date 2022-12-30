@@ -14,13 +14,13 @@
   },
   "homepage": "https://github.com/parsegraph/weetcubes#readme",
   "dependencies": {
-    "parsegraph-normalizewheel": "^1.4.7",
-    "parsegraph-physical": "^2.0.11",
-    "parsegraph-projector": "^1.14.3"
+    "parsegraph-normalizewheel": "^1.4.8",
+    "parsegraph-physical": "^2.0.12",
+    "parsegraph-projector": "^1.14.4"
   },
   "peerDependencies": {
-    "parsegraph-checkglerror": "^1.5.3",
-    "parsegraph-log": "^1.7.3"
+    "parsegraph-checkglerror": "^1.5.4",
+    "parsegraph-log": "^1.7.4"
   },
   "types": "dist/src/index.d.ts",
   "devDependencies": {
@@ -46,8 +46,8 @@
     "jest": "^28.0.3",
     "jsdom": "^19.0.0",
     "jsdom-global": "^3.0.2",
-    "parsegraph-checkglerror": "^1.5.3",
-    "parsegraph-log": "^1.7.3",
+    "parsegraph-checkglerror": "^1.5.4",
+    "parsegraph-log": "^1.7.4",
     "prettier": "^2.6.2",
     "raw-loader": "^4.0.2",
     "source-map-loader": "^3.0.1",

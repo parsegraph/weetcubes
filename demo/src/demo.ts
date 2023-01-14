@@ -3,7 +3,7 @@ const glob = require("glob");
 const express = require("express");
 const app = express();
 
-const name = "weetcubes";
+const moduleName = "weetcubes";
 
 const getPort = (port) => {
   if (process.env.SITE_PORT) {
@@ -35,7 +35,7 @@ const getRootPath = () => {
 };
 const root = getRootPath();
 
-async function getDemos() {
+async function getDemos(): Promise<string[]> {
   return new Promise((respond, reject) => {
     glob("../www/*.html", {}, function (err, files) {
       if (err) {
@@ -56,7 +56,8 @@ async function getDemos() {
 }
 
 app.get(root, async (req, res) => {
-  resp = "";
+  const name = moduleName;
+  let resp = "";
   const write = (text) => {
     resp += text + "\n";
   };
@@ -91,6 +92,6 @@ app.use(root, express.static("../www"));
 
 app.listen(port, () => {
   console.log(
-    `See ${name} build information at http://localhost:${port}${root}`
+    `See ${moduleName} build information at http://localhost:${port}${root}`
   );
 });

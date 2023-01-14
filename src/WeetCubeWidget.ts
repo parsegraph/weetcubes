@@ -178,8 +178,8 @@ export default class WeetCubeWidget implements Projected {
   }
 
   handleEvent(eventType: string, eventData?: any) {
-    const callListener = ()=>{
-        if (eventType === "wheel") {
+    const callListener = () => {
+      if (eventType === "wheel") {
         return this._input.onWheel(eventData);
       } else if (eventType === "mousemove") {
         return this._input.onMousemove(eventData);
@@ -364,7 +364,7 @@ export default class WeetCubeWidget implements Projected {
     let panner;
 
     const cubeSize = 1;
-    //console.log("Painting", elapsed);
+    // console.log("Painting", elapsed);
     for (let i = 0; i < this._xMax; ++i) {
       for (let j = 0; j < this._yMax; ++j) {
         for (let k = 0; k < this._zMax; ++k) {

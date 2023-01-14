@@ -239,7 +239,7 @@ export default class AlphaInput {
    * Sets the start to the end, and clears mousewheel totals.
    */
   Update(elapsed: number) {
-    //console.log("Updating with elapsed: " + elapsed);
+    // console.log("Updating with elapsed: " + elapsed);
     if (this.Get("Shift") > 0) {
       elapsed = elapsed * 10;
     }
@@ -248,13 +248,13 @@ export default class AlphaInput {
       elapsed = elapsed / 10;
     }
 
-    //console.log("LeftMouseButton: " + this.Get("LeftMouseButton"));
-    //console.log("MouseLeft: " + this.MouseLeft() * elapsed);
-    //console.log(
-      //"MouseLeft: " + this.Get("LeftMouseButton") * this.MouseLeft() * elapsed
-    //);
-    //console.log("LeftMouse: " + this.Get("LeftMouseButton"));
-    //console.log("TurnLeft: " + this.MouseLeft() * elapsed);
+    // console.log("LeftMouseButton: " + this.Get("LeftMouseButton"));
+    // console.log("MouseLeft: " + this.MouseLeft() * elapsed);
+    // console.log(
+    // "MouseLeft: " + this.Get("LeftMouseButton") * this.MouseLeft() * elapsed
+    // );
+    // console.log("LeftMouse: " + this.Get("LeftMouseButton"));
+    // console.log("TurnLeft: " + this.MouseLeft() * elapsed);
     const phys = this.camera.getParent() as BasicPhysical;
     phys.turnLeft(this.Get("LeftMouseButton") * this.MouseLeft() * elapsed);
     phys.turnRight(this.Get("LeftMouseButton") * this.MouseRight() * elapsed);

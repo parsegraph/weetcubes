@@ -1,6 +1,7 @@
 DIST_NAME = weetcubes
 
 SCRIPT_FILES = \
+	src/AlphaController.ts \
 	src/index.ts \
 	src/WeetCubePainter.ts \
 	src/glsl.d.ts \

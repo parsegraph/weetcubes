@@ -14,15 +14,15 @@
   },
   "homepage": "https://github.com/parsegraph/weetcubes#readme",
   "dependencies": {
-    "parsegraph-color": "^1.4.11",
-    "parsegraph-compileprogram": "^2.2.18",
-    "parsegraph-matrix": "^1.4.14",
-    "parsegraph-method": "^1.4.24",
-    "parsegraph-normalizewheel": "^1.4.8",
-    "parsegraph-physical": "^2.0.12",
-    "parsegraph-projector": "^1.14.6",
-    "parsegraph-timing": "^1.4.17",
-    "parsegraph-timingbelt": "^1.8.1"
+    "parsegraph-color": "^1.4.12",
+    "parsegraph-compileprogram": "^2.2.20",
+    "parsegraph-matrix": "^1.4.15",
+    "parsegraph-method": "^1.4.25",
+    "parsegraph-normalizewheel": "^1.4.9",
+    "parsegraph-physical": "^2.0.15",
+    "parsegraph-projector": "^1.14.8",
+    "parsegraph-timing": "^1.4.19",
+    "parsegraph-timingbelt": "^1.8.3"
   },
   "peerDependencies": {
     "parsegraph-checkglerror": "^1.5.7",

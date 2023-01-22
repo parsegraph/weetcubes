@@ -20,7 +20,7 @@
     "parsegraph-method": "^1.4.24",
     "parsegraph-normalizewheel": "^1.4.8",
     "parsegraph-physical": "^2.0.12",
-    "parsegraph-projector": "^1.14.4",
+    "parsegraph-projector": "^1.14.6",
     "parsegraph-timing": "^1.4.17",
     "parsegraph-timingbelt": "^1.8.1"
   },

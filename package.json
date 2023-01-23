@@ -19,8 +19,8 @@
     "parsegraph-matrix": "^1.4.15",
     "parsegraph-method": "^1.4.25",
     "parsegraph-normalizewheel": "^1.4.9",
-    "parsegraph-physical": "^2.0.15",
-    "parsegraph-projector": "^1.14.8",
+    "parsegraph-physical": "^2.0.16",
+    "parsegraph-projector": "^1.14.9",
     "parsegraph-timing": "^1.4.19",
     "parsegraph-timingbelt": "^1.8.3"
   },

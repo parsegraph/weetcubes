@@ -15,12 +15,12 @@
   "homepage": "https://github.com/parsegraph/weetcubes#readme",
   "dependencies": {
     "parsegraph-color": "^1.4.12",
-    "parsegraph-compileprogram": "^2.2.20",
+    "parsegraph-compileprogram": "^2.2.21",
     "parsegraph-matrix": "^1.4.15",
     "parsegraph-method": "^1.4.25",
     "parsegraph-normalizewheel": "^1.4.9",
     "parsegraph-physical": "^2.0.16",
-    "parsegraph-projector": "^1.14.9",
+    "parsegraph-projector": "^1.14.10",
     "parsegraph-timing": "^1.4.19",
     "parsegraph-timingbelt": "^1.8.3"
   },

@@ -1,6 +1,6 @@
 {
   "name": "parsegraph-weetcubes",
-  "version": "1.5.8",
+  "version": "1.5.9",
   "description": "Animated 3D cubes with eerie sound",
   "main": "dist/src/index.js",
   "repository": {
